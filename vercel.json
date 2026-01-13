@@ -1,11 +1,6 @@
 {
-  "functions": {
-    "api/index.py": {
-      "runtime": "@vercel/python@3.10"
-    }
-  },
   "routes": [
-    { "src": "/chat", "dest": "api/index.py" },
+    { "src": "/chat", "dest": "/api/index.py" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
