@@ -1,6 +1,6 @@
 {
   "routes": [
-    { "src": "/chat", "dest": "/api/index.py" },
+    { "src": "^/chat$", "dest": "/api/index.py" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }

@@ -16,8 +16,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyDvIR8-L80BiDaWQcIuWkKFz4jB_uPjXa4")
-genai.configure(api_key=API_KEY)
+API_KEY = os.getenv("GEMINI_API_KEY")
+if not API_KEY:
+    raise RuntimeError("GEMINI_API_KEY not set")
+
+genai.configure(api_key="AIzaSyDvIR8-L80BiDaWQcIuWkKFz4jB_uPjXa4")
+
+
+
 
 def get_model():
     return genai.GenerativeModel(
@@ -69,22 +75,15 @@ def chat(request: ChatRequest, model = Depends(get_model)):
         user_message = request.message.strip()
         if not user_message:
             raise HTTPException(status_code=400, detail="No message")
-        prompt = f"{BUSINESS_CONTEXT}\n{user_message}\n\nAssistant:"
 
-        response = model.generate_content(
-            prompt,
-            request_options=RequestOptions(
-                retry=retry.Retry(
-                    initial=2,
-                    multiplier=2,
-                    maximum=60,
-                    timeout=300
-                )
-            )
-        )
+        prompt = f"{BUSINESS_CONTEXT}\nUser: {user_message}\nAssistant:"
+
+        response = model.generate_content(prompt)
+
         if not response or not response.text:
             raise HTTPException(status_code=400, detail="No response")
-        return ChatResponse(reply=response.text.strip())
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
 
+        return ChatResponse(reply=response.text.strip())
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
