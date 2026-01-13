@@ -1,0 +1,11 @@
+{
+  "functions": {
+    "api/index.py": {
+      "runtime": "python3.10"
+    }
+  },
+  "routes": [
+    { "src": "/chat", "dest": "api/index.py" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
